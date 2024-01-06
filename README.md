@@ -5,12 +5,12 @@ MERN stack site for Air and Train tickets buying
 
 Установить MongoDB Community с офф сайта ;
 
-Исполнить команды в папке client: npm install ; 
+Исполнить команду в папке client: npm install ; 
 Исполнить команду в папке server: npm install ;
 
 
 Исполнить команду в папке server: npm start ;
-Исполнит команду в папке client: npm start ;
+Исполнить команду в папке client: npm start ;
 
 Сайт работает по ссылке http://localhost:3000 ;
 
