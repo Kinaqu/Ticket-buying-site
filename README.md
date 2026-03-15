@@ -6,9 +6,6 @@
   </p>
   
   <p>
-    <a href="https://github.com/Kinaqu/Ticket-buying-site/stargazers">
-      <img src="https://img.shields.io/github/stars/Kinaqu/ticket-booking?style=for-the-badge&color=yellow" alt="Stars" />
-    </a>
     <img src="https://img.shields.io/badge/Status-Learning_Project-orange?style=for-the-badge" alt="Learning Project" />
   </p>
 </div>
