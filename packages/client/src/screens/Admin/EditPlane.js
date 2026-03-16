@@ -35,8 +35,12 @@ const PlaneItem = ({ plane, onUpdate }) => {
           <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{plane}</span>
         </div>
         <button onClick={() => setOpen(!open)} style={{
-          padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
-          fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
+          padding: '6px 14px',
+          borderRadius: 8,
+          cursor: 'pointer',
+          fontFamily: 'var(--font-body)',
+          fontWeight: 600,
+          fontSize: '0.8rem',
           background: open ? 'rgba(220,38,38,0.1)' : 'var(--bg-elevated)',
           color: open ? '#dc2626' : 'var(--text-secondary)',
           border: `1px solid ${open ? 'rgba(220,38,38,0.2)' : 'var(--border-subtle)'}`,
@@ -68,7 +72,7 @@ const PlaneItem = ({ plane, onUpdate }) => {
             onBlur={e => e.target.style.borderColor = 'var(--border-subtle)'}
           />
           <button onClick={handleUpdate} disabled={saving || !newPlane.trim()} style={{
-            padding: '10px 20px', borderRadius: 9, border: 'none', cursor: 'pointer',
+            padding: '10px 20px', borderRadius: 9, cursor: 'pointer',
             fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem',
             background: '#dc2626', color: '#fff',
             opacity: saving || !newPlane.trim() ? 0.6 : 1,

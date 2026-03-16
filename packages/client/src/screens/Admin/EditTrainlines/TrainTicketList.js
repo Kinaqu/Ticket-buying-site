@@ -128,8 +128,8 @@ const TrainTicketList = ({ onTicketClick }) => {
                   gap: 16, flexWrap: 'wrap',
                   transition: 'border-color 0.2s',
                 }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-medium)'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-medium)'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 200 }}>
                     <div style={{
@@ -162,13 +162,13 @@ const TrainTicketList = ({ onTicketClick }) => {
 
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button onClick={e => { e.stopPropagation(); setEditingTicket(ticket); }} style={{
-                      padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      padding: '7px 14px', borderRadius: 8, cursor: 'pointer',
                       fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
                       background: 'var(--bg-elevated)', color: 'var(--text-secondary)',
                       border: '1px solid var(--border-subtle)',
                     }}>Edit</button>
                     <button onClick={e => { e.stopPropagation(); handleDelete(ticket._id); }} style={{
-                      padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      padding: '7px 14px', borderRadius: 8, cursor: 'pointer',
                       fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
                       background: 'rgba(220,38,38,0.08)', color: '#dc2626',
                       border: '1px solid rgba(220,38,38,0.18)',

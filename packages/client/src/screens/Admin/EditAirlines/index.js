@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../../api';
+import api from '../../../api';
 import FlightTicketForm from './FlightTicketForm';
 import FlightTicketList from './FlightTicketList';
 import AdminNavbar from '../../../components/AdminNavbar';

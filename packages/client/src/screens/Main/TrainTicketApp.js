@@ -141,7 +141,6 @@ const TicketCard = ({ train, onBuy }) => {
         <button onClick={handleBuy} disabled={buying || bought} style={{
           padding: '9px 22px',
           borderRadius: 10,
-          border: 'none',
           cursor: bought ? 'default' : 'pointer',
           fontFamily: 'var(--font-body)',
           fontWeight: 700,

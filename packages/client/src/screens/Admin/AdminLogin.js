@@ -16,7 +16,7 @@ const AdminLoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await api.post('/admin/login', {
+      await api.post('/admin/login', {
         adminLogin,
         adminPassword: password,
       });
