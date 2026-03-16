@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 
 const inputStyle = {
   width: '100%',
@@ -47,8 +47,8 @@ const TrainTicketForm = ({ onAddTicket }) => {
 
   useEffect(() => {
     Promise.all([
-      axios.get('http://localhost:3001/api/countries'),
-      axios.get('http://localhost:3001/api/cities'),
+      api.get('/api/countries'),
+      api.get('/api/cities'),
     ]).then(([cr, ci]) => { setCountries(cr.data); setCities(ci.data); });
   }, []);
 
@@ -57,7 +57,7 @@ const TrainTicketForm = ({ onAddTicket }) => {
   const addTicket = async () => {
     setAdding(true);
     try {
-      const r = await axios.post('http://localhost:3001/api/admin/TrainTicket', newTicket);
+      const r = await api.post('/api/admin/TrainTicket', newTicket);
       onAddTicket(r.data);
       setNewTicket({ Train: '', CountryDeparture: '', CountryArrival: '', CityDeparture: '', CityArrival: '', Price: 100000, TrainNumber: '00000', DepartureDateTime: new Date(), ArriveDateTime: new Date() });
       setOpen(false);

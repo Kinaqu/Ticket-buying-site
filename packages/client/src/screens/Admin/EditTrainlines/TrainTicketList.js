@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import TrainTicketEditForm from './TrainTicketEditForm';
 
 const TrainTicketList = ({ onTicketClick }) => {
@@ -16,7 +16,7 @@ const TrainTicketList = ({ onTicketClick }) => {
 
   const fetchTickets = useCallback(async () => {
     try {
-      const r = await axios.get('http://localhost:3001/api/admin/TrainTicket');
+      const r = await api.get('/api/admin/TrainTicket');
       setTickets(r.data);
       setLoading(false);
     } catch (e) {
@@ -27,8 +27,8 @@ const TrainTicketList = ({ onTicketClick }) => {
 
   useEffect(() => {
     Promise.all([
-      axios.get('http://localhost:3001/api/countries'),
-      axios.get('http://localhost:3001/api/cities'),
+      api.get('/api/countries'),
+      api.get('/api/cities'),
     ]).then(([cr, ci]) => {
       setCountries(cr.data);
       setCities(ci.data);
@@ -41,18 +41,18 @@ const TrainTicketList = ({ onTicketClick }) => {
 
   const handleSearch = async () => {
     if (!searchQuery) { fetchTickets(); return; }
-    const r = await axios.get(`http://localhost:3001/api/admin/TrainTicket?search=${searchQuery}`);
+    const r = await api.get(`/api/admin/TrainTicket?search=${searchQuery}`);
     setTickets(r.data);
   };
 
   const handleDelete = async (ticketId) => {
     if (!window.confirm('Delete this train ticket?')) return;
-    await axios.delete(`http://localhost:3001/api/admin/TrainTicket/${ticketId}`);
+    await api.delete(`/api/admin/TrainTicket/${ticketId}`);
     fetchTickets();
   };
 
   const handleUpdate = async () => {
-    await axios.put(`http://localhost:3001/api/admin/TrainTicket/${editingTicket._id}`, editingTicket);
+    await api.put(`/api/admin/TrainTicket/${editingTicket._id}`, editingTicket);
     setEditingTicket(null);
     fetchTickets();
   };

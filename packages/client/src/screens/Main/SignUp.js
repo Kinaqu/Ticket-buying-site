@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -16,7 +16,7 @@ const RegisterPage = () => {
   const handleRegister = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3001/api/signup', form);
+      const response = await api.post('/api/signup', form);
       setMessage(response.data.message);
       setSuccess(true);
     } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useAuthUser } from '../../components/AuthContextUser';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -170,15 +170,15 @@ const TrainTicketApp = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:3001/api/TrainTicketUser?searchQuery=${searchQuery}`)
+    api.get(`/api/TrainTicketUser?searchQuery=${searchQuery}`)
       .then(response => { setTrains(response.data); setLoading(false); })
       .catch(error => { console.error('Error fetching trains:', error); setLoading(false); });
   }, [searchQuery]);
 
   const handleBuyClick = async (trainTicketId) => {
     const userId = user.id;
-    await axios.post(
-      `http://localhost:3001/api/TrainTicketUser/${trainTicketId}/purchase`,
+    await api.post(
+      `/api/TrainTicketUser/${trainTicketId}/purchase`,
       { userId },
       { headers: { 'Content-Type': 'application/json' } }
     );

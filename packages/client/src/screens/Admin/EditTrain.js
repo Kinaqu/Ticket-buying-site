@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import Footer from '../../components/Footer';
+import api from '../../api';
 
 const TrainItem = ({ train, onUpdate }) => {
   const [open, setOpen] = useState(false);
@@ -86,15 +86,15 @@ const EditTrainsPage = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchTrains = () => {
-    axios.get('http://localhost:3001/api/admin/trains')
+    api.get('/api/admin/trains')
       .then(response => { setTrains(response.data); setLoading(false); })
       .catch(error => { console.error(error); setLoading(false); });
   };
-
+ч
   useEffect(() => { fetchTrains(); }, []);
 
   const handleUpdateTrain = async (oldTrain, newTrain) => {
-    await axios.put(`http://localhost:3001/api/admin/trains/${oldTrain}`, { newTrain, oldTrain });
+    await api.put(`/api/admin/trains/${oldTrain}`, { newTrain, oldTrain });
     fetchTrains();
   };
 

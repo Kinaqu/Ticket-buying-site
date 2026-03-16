@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import TrainTicketForm from './TrainTicketForm';
 import TrainTicketList from './TrainTicketList';
 import AdminNavbar from '../../../components/AdminNavbar';
@@ -9,7 +9,7 @@ const EditTrainTicketsPage = () => {
   const [trainTickets, setTrainTickets] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/admin/TrainTicket')
+    api.get('/api/admin/TrainTicket')
       .then(r => setTrainTickets(r.data))
       .catch(console.error);
   }, []);

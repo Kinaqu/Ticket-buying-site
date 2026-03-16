@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import AdminNavbar from '../../components/AdminNavbar';
 import Footer from '../../components/Footer';
+
 
 const PlaneItem = ({ plane, onUpdate }) => {
   const [open, setOpen] = useState(false);
@@ -86,7 +87,7 @@ const EditPlanesPage = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchPlanes = () => {
-    axios.get('http://localhost:3001/api/admin/flights')
+    api.get('/api/admin/flights')
       .then(response => { setPlanes(response.data); setLoading(false); })
       .catch(error => { console.error(error); setLoading(false); });
   };
@@ -94,7 +95,7 @@ const EditPlanesPage = () => {
   useEffect(() => { fetchPlanes(); }, []);
 
   const handleUpdatePlane = async (oldPlane, newPlane) => {
-    await axios.put(`http://localhost:3001/api/admin/flights/${oldPlane}`, { newPlane, oldPlane });
+    await api.put(`/api/admin/flights/${oldPlane}`, { newPlane, oldPlane });
     fetchPlanes();
   };
 

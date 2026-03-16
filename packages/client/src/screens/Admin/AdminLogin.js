@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import AdminNavbar from '../../components/AdminNavbar';
 import Footer from '../../components/Footer';
 import { useAuthAdmin } from '../../components/AuthContextAdmin';
@@ -16,7 +16,7 @@ const AdminLoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      const response = await axios.post('http://localhost:3001/admin/login', {
+      const response = await api.post('/admin/login', {
         adminLogin,
         adminPassword: password,
       });

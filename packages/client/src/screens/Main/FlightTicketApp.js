@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { useAuthUser } from '../../components/AuthContextUser';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -158,15 +158,15 @@ const FlightTicketApp = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:3001/api/AirplaneTicketUser?searchQuery=${searchQuery}`)
+    api.get(`/api/AirplaneTicketUser?searchQuery=${searchQuery}`)
       .then(response => { setFlights(response.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [searchQuery]);
 
   const handleBuyClick = async (ticketId) => {
     const userId = user.id;
-    await axios.post(
-      `http://localhost:3001/api/FlightTicketUser/${ticketId}/purchase`,
+    await api.post(
+      `/api/FlightTicketUser/${ticketId}/purchase`,
       { userId },
       { headers: { 'Content-Type': 'application/json' } }
     );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthUser } from '../../components/AuthContextUser';
-import axios from 'axios';
+import api from '../../api';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -67,7 +67,7 @@ const UserTickets = () => {
     const fetchUserTickets = async () => {
       try {
         if (isAuthenticatedAsUser() && user) {
-          const response = await axios.get(`http://localhost:3001/api/tickets/${user.id}`);
+          const response = await api.get(`/api/tickets/${user.id}`);
           setTrainTickets(response.data.trainTickets || []);
           setFlightTickets(response.data.flightTickets || []);
         }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -18,7 +18,7 @@ const LoginPage = () => {
     setLoading(true);
     setMessage('');
     try {
-      const response = await axios.post('http://localhost:3001/api/login', { email, password });
+      const response = await api.post('/api/login', { email, password });
       login(response.data.user);
       navigate('/');
     } catch (error) {

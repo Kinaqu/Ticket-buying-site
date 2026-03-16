@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -8,7 +8,7 @@ const BuslinesPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('/api/getBuslines')
+    api.get('/api/getBuslines')
       .then(response => { setBuslines(response.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

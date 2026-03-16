@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import FlightTicketForm from './FlightTicketForm';
 import FlightTicketList from './FlightTicketList';
 import AdminNavbar from '../../../components/AdminNavbar';
@@ -9,7 +9,7 @@ const EditAirTicketsPage = () => {
   const [flightTickets, setFlightTickets] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/api/admin/FlightTicket')
+    api.get('/api/admin/FlightTicket')
       .then(r => setFlightTickets(r.data))
       .catch(console.error);
   }, []);
