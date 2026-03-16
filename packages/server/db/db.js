@@ -1,27 +1,38 @@
 const mongoose = require('mongoose');
 
-const mongoUri = process.env.MONGODB_URI;
+mongoose.set('strictQuery', true);
 
-if (!mongoUri) {
-  throw new Error('MONGODB_URI is not defined');
-}
+const connectDB = async () => {
+  const mongoUri = process.env.MONGODB_URI;
 
-mongoose.connect(mongoUri);
+  if (!mongoUri) {
+    throw new Error('MONGODB_URI is not defined');
+  }
 
-const db = mongoose.connection;
+  try {
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 30000,
+    });
 
-db.on('error', (error) => {
-  console.error('Ошибка подключения к MongoDB:', error);
-});
+    console.log('Успешное подключение к MongoDB');
+  } catch (error) {
+    console.error('Ошибка подключения к MongoDB:', error);
+    throw error;
+  }
+};
 
-db.once('open', () => {
-  console.log('Успешное подключение к MongoDB');
+mongoose.connection.on('error', (error) => {
+  console.error('Ошибка MongoDB connection:', error);
 });
 
 process.on('SIGINT', async () => {
-  console.log('Закрытие соединения с базой данных по сигналу SIGINT');
-  await mongoose.connection.close();
-  process.exit(0);
+  try {
+    console.log('Закрытие соединения с базой данных по сигналу SIGINT');
+    await mongoose.connection.close();
+  } finally {
+    process.exit(0);
+  }
 });
 
 module.exports = mongoose;
+module.exports.connectDB = connectDB;

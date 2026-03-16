@@ -9,7 +9,8 @@ const bodyParser = require('body-parser');
 const AdminPassport = require('./routes/POST/Auth/adminconfig');
 const UserPassport = require('./routes/POST/Auth/config');
 
-require('./db/db');
+const db = require('./db/db');
+
 
 const insertAdminData = require('./db/data/AdminData');
 const CityData = require('./db/data/CityData');
@@ -59,8 +60,6 @@ app.use('/admin', AdminPassport.session());
 app.use('/', UserPassport.initialize());
 app.use('/', UserPassport.session());
 
-insertAdminData();
-CityData();
 
 const adminLogin = require('./routes/POST/Auth/AdminLogin');
 const userLogin = require('./routes/POST/Auth/UserLogin');
@@ -138,6 +137,21 @@ app.use((err, req, res, next) => {
   res.status(500).send('Internal Server Error');
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Сервер запущен на порту ${port}`);
-});
+
+
+const startServer = async () => {
+  try {
+    await db.connectDB();
+    await insertAdminData();
+    await CityData();
+
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`Сервер запущен на порту ${port}`);
+    });
+  } catch (error) {
+    console.error('Не удалось запустить сервер:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

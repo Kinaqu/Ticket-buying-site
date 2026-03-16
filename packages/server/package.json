@@ -21,7 +21,7 @@
     "dotenv": "^17.3.1",
     "express": "^4.17.1",
     "mongodb": "^5.1.0",
-    "mongoose": "^6.0.10",
+    "mongoose": "^8.21.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0"
   }
