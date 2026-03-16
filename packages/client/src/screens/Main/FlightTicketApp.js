@@ -34,16 +34,16 @@ const FlightCard = ({ ticket, onBuy }) => {
       position: 'relative',
       overflow: 'hidden',
     }}
-    onMouseEnter={e => {
-      e.currentTarget.style.borderColor = 'rgba(230,57,70,0.3)';
-      e.currentTarget.style.transform = 'translateY(-3px)';
-      e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.3)';
-    }}
-    onMouseLeave={e => {
-      e.currentTarget.style.borderColor = 'var(--border-subtle)';
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = 'none';
-    }}
+      onMouseEnter={e => {
+        e.currentTarget.style.borderColor = 'rgba(230,57,70,0.3)';
+        e.currentTarget.style.transform = 'translateY(-3px)';
+        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.3)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.borderColor = 'var(--border-subtle)';
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = 'none';
+      }}
     >
       <div style={{
         position: 'absolute', top: 0, right: 0, width: 130, height: 90,
@@ -140,8 +140,8 @@ const FlightCard = ({ ticket, onBuy }) => {
           border: `1px solid ${bought ? 'rgba(52,211,153,0.25)' : 'rgba(230,57,70,0.25)'}`,
           transition: 'all 0.2s', opacity: buying ? 0.7 : 1,
         }}
-        onMouseEnter={e => !bought && (e.target.style.background = 'rgba(230,57,70,0.25)')}
-        onMouseLeave={e => !bought && (e.target.style.background = 'var(--red-muted)')}
+          onMouseEnter={e => !bought && (e.target.style.background = 'rgba(230,57,70,0.25)')}
+          onMouseLeave={e => !bought && (e.target.style.background = 'var(--red-muted)')}
         >
           {bought ? '✓ Booked' : buying ? 'Booking…' : 'Book Ticket'}
         </button>
@@ -166,7 +166,7 @@ const FlightTicketApp = () => {
   const handleBuyClick = async (ticketId) => {
     const userId = user.id;
     await api.post(
-      `/api/FlightTicketUser/${ticketId}/purchase`,
+      `/api/AirplaneTicketUser/${ticketId}/purchase`,
       { userId },
       { headers: { 'Content-Type': 'application/json' } }
     );
@@ -206,7 +206,7 @@ const FlightTicketApp = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              flex: 1,  background: 'transparent',
+              flex: 1, background: 'transparent',
               color: 'var(--text-primary)', fontFamily: 'var(--font-body)',
               fontSize: '0.95rem', outline: 'none',
             }}
