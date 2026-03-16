@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const { dbName } = require('./config');
 
-const url = `mongodb://localhost:27017/${dbName}`;
+const url = `mongodb+srv://dimer133745_db_user:qrVBpsVuBTdEiDNW@cluster0.kjr2ugw.mongodb.net/?appName=Cluster0`;
 
 // Подключение к MongoDB с использованием Mongoose
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -19,4 +18,3 @@ process.on('SIGINT', () => {
 });
 
 module.exports = mongoose;
-

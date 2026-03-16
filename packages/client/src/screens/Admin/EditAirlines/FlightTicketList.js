@@ -1,171 +1,187 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import TicketEditForm from './FlightTicketEditForm';  
+import FlightTicketEditForm from './FlightTicketEditForm';
 
 const FlightTicketList = ({ onTicketClick }) => {
   const [tickets, setTickets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [editingTicket, setEditingTicket] = useState(null);
-
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
   const [filteredDepartureCities, setFilteredDepartureCities] = useState([]);
   const [filteredArrivalCities, setFilteredArrivalCities] = useState([]);
 
-  const uniqueDepartureCountries = [...new Set(countries.map(country => country.Country))];
-  const uniqueArrivalCountries = [...new Set(countries.map(country => country.Country))];
-
-  const handleDeleteClick = async (ticketId) => {
-    try {
-      await axios.delete(`http://localhost:3001/api/admin/FlightTicket/${ticketId}`);
-      fetchTickets(); // Обновляем список после удаления
-    } catch (error) {
-      console.error('Error deleting flight ticket:', error);
-    }
-  };
+  const uniqueCountries = [...new Set(countries.map(c => c.Country))];
 
   const fetchTickets = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/admin/FlightTicket');
-      setTickets(response.data);
+      const r = await axios.get('http://localhost:3001/api/admin/FlightTicket');
+      setTickets(r.data);
       setLoading(false);
-    } catch (error) {
-      console.error('Error fetching flight tickets:', error);
+    } catch (e) {
+      console.error(e);
       setLoading(false);
     }
   }, []);
 
-  const delayedSearch = async (query) => {
-    try {
-      const response = await axios.get(`http://localhost:3001/api/admin/FlightTicket?search=${searchQuery}`);
-      setTickets(response.data);
-    } catch (error) {
-      console.error('Error searching flight tickets:', error);
-    }
+  useEffect(() => {
+    Promise.all([
+      axios.get('http://localhost:3001/api/countries'),
+      axios.get('http://localhost:3001/api/cities'),
+    ]).then(([cr, ci]) => {
+      setCountries(cr.data);
+      setCities(ci.data);
+    }).catch(console.error);
+
+    fetchTickets();
+    const id = setInterval(fetchTickets, 10000);
+    return () => clearInterval(id);
+  }, [fetchTickets]);
+
+  const handleSearch = async () => {
+    if (!searchQuery) { fetchTickets(); return; }
+    const r = await axios.get(`http://localhost:3001/api/admin/FlightTicket?search=${searchQuery}`);
+    setTickets(r.data);
   };
 
-  const handleSearch = () => {
-    if (!searchQuery) {
-      fetchTickets();
-    } else {
-      delayedSearch(searchQuery);
-    }
-  };
-
-  const handleInputChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-
-  const handleUpdateClick = (ticket) => {
-    setEditingTicket(ticket);
+  const handleDelete = async (ticketId) => {
+    if (!window.confirm('Delete this flight ticket?')) return;
+    await axios.delete(`http://localhost:3001/api/admin/FlightTicket/${ticketId}`);
+    fetchTickets();
   };
 
   const handleUpdate = async () => {
-    try {
-      await axios.put(`http://localhost:3001/api/admin/FlightTicket/${editingTicket._id}`, {
-        Plane: editingTicket.Plane,
-        CountryDeparture: editingTicket.CountryDeparture,
-        CountryArrival: editingTicket.CountryArrival,
-        CityDeparture: editingTicket.CityDeparture,
-        CityArrival: editingTicket.CityArrival,
-        Price: editingTicket.Price,
-        FlightNumber: editingTicket.FlightNumber,
-        DepartureDateTime: editingTicket.DepartureDateTime,
-        LandDateTime: editingTicket.LandDateTime,
-      });
-
-      setEditingTicket(null);
-      fetchTickets();
-    } catch (error) {
-      console.error('Error updating flight ticket:', error);
-    }
+    await axios.put(`http://localhost:3001/api/admin/FlightTicket/${editingTicket._id}`, editingTicket);
+    setEditingTicket(null);
+    fetchTickets();
   };
 
-  const handleCountryChange = (field, value, isDeparture) => {
-    const filteredCities = cities.filter(city => city.Country === value);
-    isDeparture ? setFilteredDepartureCities(filteredCities) : setFilteredArrivalCities(filteredCities);
-
-    setEditingTicket({
-      ...editingTicket,
-      [field]: isDeparture ? value : editingTicket[field],
+  const handleCountryChange = (field, value, isDep) => {
+    const filtered = cities.filter(c => c.Country === value);
+    isDep ? setFilteredDepartureCities(filtered) : setFilteredArrivalCities(filtered);
+    setEditingTicket(t => ({
+      ...t,
+      [field]: value,
       [field === 'CountryDeparture' ? 'CityDeparture' : 'CityArrival']: '',
-    });
+    }));
   };
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const countriesResponse = await axios.get('http://localhost:3001/api/countries');
-        setCountries(countriesResponse.data);
-
-        const citiesResponse = await axios.get('http://localhost:3001/api/cities');
-        setCities(citiesResponse.data);
-
-        fetchTickets();
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-
-    // Отправлять GET-запрос каждые 10 секунд
-    const intervalId = setInterval(() => {
-      fetchTickets();
-    }, 10000);
-
-    // Очистить интервал при размонтировании компонента
-    return () => clearInterval(intervalId);
-  }, [fetchTickets]);
 
   return (
     <div>
-      <h2>Existing Tickets</h2>
-  
-      <div>
-      <input type="text" value={searchQuery} onChange={handleInputChange} placeholder="Search by Plane" />
-      <button onClick={handleSearch}>Search</button>
+      {/* Search bar */}
+      <div style={{
+        display: 'flex', gap: 10, marginBottom: 20,
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: '8px 8px 8px 16px', alignItems: 'center',
+      }}>
+        <span style={{ color: 'var(--text-muted)', fontSize: 15 }}>🔍</span>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleSearch()}
+          placeholder="Search by plane name…"
+          style={{
+            flex: 1, border: 'none', background: 'transparent',
+            color: 'var(--text-primary)', fontFamily: 'var(--font-body)',
+            fontSize: '0.9rem', outline: 'none',
+          }}
+        />
+        <button onClick={handleSearch} style={{
+          padding: '7px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
+          background: '#dc2626', color: '#fff',
+        }}>Search</button>
       </div>
-  
+
       {loading ? (
-        <p>Loading...</p>
-      ) : tickets && tickets.length > 0 ? (
-        tickets.map((ticket) => (
-          <div key={ticket._id} onClick={() => onTicketClick(ticket)}>
-            {editingTicket && editingTicket._id === ticket._id ? (
-              <TicketEditForm
-                ticket={editingTicket}
-                onSave={handleUpdate}
-                onCancel={() => setEditingTicket(null)}
-                onCountryChange={(field, value, isDeparture) => handleCountryChange(field, value, isDeparture)}
-                onCityChange={(field, value) => setEditingTicket({ ...editingTicket, [field]: value })}
-                uniqueDepartureCountries={uniqueDepartureCountries}
-                filteredDepartureCities={filteredDepartureCities}
-                uniqueArrivalCountries={uniqueArrivalCountries}
-                filteredArrivalCities={filteredArrivalCities}
-              />
-            ) : (
-              <>
-                <p>Plane: {ticket.Plane}</p>
-                <p>Country Departure: {ticket.CountryDeparture}</p>
-                <p>Country Arrival: {ticket.CountryArrival}</p>
-                <p>City Departure: {ticket.CityDeparture}</p>
-                <p>City Arrival: {ticket.CityArrival}</p>
-                <p>Price: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(ticket.Price)}</p>
-                <p>Flight Number: {ticket.FlightNumber}</p>
-                <p>Departure Date Time: {new Date(ticket.DepartureDateTime).toLocaleString()}</p>
-                <p>Land Date Time: {new Date(ticket.LandDateTime).toLocaleString()}</p>
-                <button onClick={() => handleUpdateClick(ticket)}>Update</button>
-                <button onClick={() => handleDeleteClick(ticket._id)}>Delete</button>
-              </>
-            )}
-          </div>
-        ))
+        <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>Loading tickets…</div>
+      ) : tickets.length === 0 ? (
+        <div style={{
+          textAlign: 'center', padding: '48px 24px',
+          background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 14,
+          color: 'var(--text-muted)',
+        }}>No flight tickets found.</div>
       ) : (
-        <p>No tickets found</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {tickets.map(ticket => (
+            <div key={ticket._id} onClick={() => onTicketClick?.(ticket)}>
+              {editingTicket?._id === ticket._id ? (
+                <FlightTicketEditForm
+                  ticket={editingTicket}
+                  onSave={handleUpdate}
+                  onCancel={() => setEditingTicket(null)}
+                  onCountryChange={handleCountryChange}
+                  onCityChange={(f, v) => setEditingTicket(t => ({ ...t, [f]: v }))}
+                  uniqueDepartureCountries={uniqueCountries}
+                  filteredDepartureCities={filteredDepartureCities}
+                  uniqueArrivalCountries={uniqueCountries}
+                  filteredArrivalCities={filteredArrivalCities}
+                />
+              ) : (
+                <div style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 14, padding: '16px 20px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  gap: 16, flexWrap: 'wrap',
+                  transition: 'border-color 0.2s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-medium)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+                >
+                  {/* Left info */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 200 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 9, fontSize: 16, flexShrink: 0,
+                      background: 'var(--red-muted)', border: '1px solid rgba(230,57,70,0.2)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>✈</div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{ticket.Plane}</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                        {ticket.CityDeparture}, {ticket.CountryDeparture} → {ticket.CityArrival}, {ticket.CountryArrival}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Middle */}
+                  <div style={{ display: 'flex', gap: 20, fontSize: '0.82rem' }}>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)' }}>Flight </span>
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>#{ticket.FlightNumber}</span>
+                    </div>
+                    <div>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 700, color: 'var(--red-primary)' }}>
+                        ${Number(ticket.Price).toLocaleString()}
+                      </span>
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>
+                      {new Date(ticket.DepartureDateTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={e => { e.stopPropagation(); setEditingTicket(ticket); }} style={{
+                      padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
+                      background: 'var(--bg-elevated)', color: 'var(--text-secondary)',
+                      border: '1px solid var(--border-subtle)', transition: 'all 0.2s',
+                    }}>Edit</button>
+                    <button onClick={e => { e.stopPropagation(); handleDelete(ticket._id); }} style={{
+                      padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
+                      background: 'rgba(220,38,38,0.08)', color: '#dc2626',
+                      border: '1px solid rgba(220,38,38,0.18)', transition: 'all 0.2s',
+                    }}>Delete</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

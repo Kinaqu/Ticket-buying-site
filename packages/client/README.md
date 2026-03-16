@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+# FlyCo Redesign — Application Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Files to replace
 
-## Available Scripts
+Copy each file from this folder into the corresponding path in your project:
 
-In the project directory, you can run:
+```
+flyco-redesign/
+│
+├── index.css                          →  src/index.css
+├── App.js                             →  src/App.js
+│
+├── components/
+│   ├── Navbar.js                      →  src/components/Navbar.js
+│   ├── AdminNavbar.js                 →  src/components/AdminNavbar.js
+│   └── Footer.js                      →  src/components/Footer.js
+│
+├── pages/
+│   ├── Main.js                        →  src/pages/Main.js
+│   ├── Admin.js                       →  src/pages/Admin.js
+│   ├── AccessDeniedAdmin.js           →  src/pages/AccessDeniedAdmin.js
+│   └── AccessDeniedUser.js            →  src/pages/AccessDeniedUser.js
+│
+├── screens/
+│   ├── Main/
+│   │   ├── AuthPage.module.css        →  src/screens/Main/AuthPage.module.css
+│   │   ├── login.css                  →  src/screens/Main/login.css
+│   │   ├── signup.css                 →  src/screens/Main/signup.css
+│   │   ├── Login.js                   →  src/screens/Main/Login.js
+│   │   ├── SignUp.js                  →  src/screens/Main/SignUp.js
+│   │   ├── Profile.js                 →  src/screens/Main/Profile.js
+│   │   ├── Buslines.js                →  src/screens/Main/Buslines.js
+│   │   ├── FlightTicketApp.js         →  src/screens/Main/FlightTicketApp.js
+│   │   └── TrainTicketApp.js          →  src/screens/Main/TrainTicketApp.js
+│   │
+│   └── Admin/
+│       ├── AuthPage.module.css        →  src/screens/Admin/AuthPage.module.css
+│       ├── AdminLogin.js              →  src/screens/Admin/AdminLogin.js
+│       ├── EditPlane.js               →  src/screens/Admin/EditPlane.js
+│       ├── EditTrain.js               →  src/screens/Admin/EditTrain.js
+│       ├── EditAirlines/
+│       │   ├── index.js               →  src/screens/Admin/EditAirlines/index.js
+│       │   ├── FlightTicketForm.js    →  src/screens/Admin/EditAirlines/FlightTicketForm.js
+│       │   ├── FlightTicketEditForm.js→  src/screens/Admin/EditAirlines/FlightTicketEditForm.js
+│       │   ├── FlightTicketList.js    →  src/screens/Admin/EditAirlines/FlightTicketList.js
+│       │   └── FlightTicketInfo.js    →  src/screens/Admin/EditAirlines/FlightTicketInfo.js
+│       └── EditTrainlines/
+│           ├── index.js               →  src/screens/Admin/EditTrainlines/index.js
+│           ├── TrainTicketForm.js     →  src/screens/Admin/EditTrainlines/TrainTicketForm.js
+│           ├── TrainTicketEditForm.js →  src/screens/Admin/EditTrainlines/TrainTicketEditForm.js
+│           ├── TrainTicketList.js     →  src/screens/Admin/EditTrainlines/TrainTicketList.js
+│           └── TrainTicketInfo.js     →  src/screens/Admin/EditTrainlines/TrainTicketInfo.js
+│
+└── public/
+    └── index.html                     →  public/index.html
+```
 
-### `npm start`
+## Files NOT changed (keep your originals)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+src/index.js
+src/components/AuthContextAdmin.js
+src/components/AuthContextUser.js
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Notes
 
-### `npm test`
+- Fonts load from Google Fonts via `index.html` preconnect + `index.css` @import.
+  If you're offline during development, fonts fall back to Georgia/system-ui gracefully.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- CSS variables are defined in `src/index.css` on `:root` — all components rely on them,
+  so make sure `index.css` is imported in `src/index.js` (it already should be).
 
-### `npm run build`
+- The `page-wrapper` className is used on every page's root div — it's defined in `index.css`
+  and ensures `min-height: 100vh` + bottom padding for the fixed footer.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `login.css` and `signup.css` are now empty stubs — all auth styles live in
+  `AuthPage.module.css`. The imports in Login.js / SignUp.js have been removed.

@@ -3,68 +3,129 @@ import axios from 'axios';
 import AdminNavbar from '../../components/AdminNavbar';
 import Footer from '../../components/Footer';
 
-const TrainTicketItem = ({ train, onUpdate }) => {
-  const [showDetails, setShowDetails] = useState(false);
+const TrainItem = ({ train, onUpdate }) => {
+  const [open, setOpen] = useState(false);
   const [newTrain, setNewTrain] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleToggleDetails = () => {
-    setShowDetails(!showDetails);
-  };
-
-  const handleNewTrainChange = (event) => {
-    setNewTrain(event.target.value);
-  };
-
-  const handleUpdateTrain = () => {
-    onUpdate(train, newTrain);
+  const handleUpdate = async () => {
+    if (!newTrain.trim()) return;
+    setSaving(true);
+    await onUpdate(train, newTrain);
     setNewTrain('');
-    handleToggleDetails();
+    setOpen(false);
+    setSaving(false);
   };
 
   return (
-    <div style={{ border: '1px solid black', padding: '10px', margin: '10px', textAlign: 'center' }}>
-      <div>{train}</div>
-      {showDetails && (
-        <div>
-          <label>New Train:</label>
-          <input type="text" value={newTrain} onChange={handleNewTrainChange} />
-          <button onClick={handleUpdateTrain}>Update Train</button>
+    <div style={{
+      background: 'var(--bg-card)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 14, padding: '18px 20px',
+      transition: 'border-color 0.2s',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 9,
+            background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+          }}>🚂</div>
+          <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{train}</span>
+        </div>
+        <button onClick={() => setOpen(!open)} style={{
+          padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
+          background: open ? 'rgba(220,38,38,0.1)' : 'var(--bg-elevated)',
+          color: open ? '#dc2626' : 'var(--text-secondary)',
+          border: `1px solid ${open ? 'rgba(220,38,38,0.2)' : 'var(--border-subtle)'}`,
+          transition: 'all 0.2s',
+        }}>
+          {open ? 'Cancel' : 'Edit'}
+        </button>
+      </div>
+
+      {open && (
+        <div style={{
+          marginTop: 16, paddingTop: 16,
+          borderTop: '1px solid var(--border-subtle)',
+          display: 'flex', gap: 10, alignItems: 'center',
+        }}>
+          <input
+            type="text"
+            value={newTrain}
+            onChange={e => setNewTrain(e.target.value)}
+            placeholder="New train name…"
+            onKeyDown={e => e.key === 'Enter' && handleUpdate()}
+            style={{
+              flex: 1, padding: '10px 14px',
+              background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+              borderRadius: 9, color: 'var(--text-primary)',
+              fontFamily: 'var(--font-body)', fontSize: '0.9rem', outline: 'none',
+            }}
+            onFocus={e => e.target.style.borderColor = '#dc2626'}
+            onBlur={e => e.target.style.borderColor = 'var(--border-subtle)'}
+          />
+          <button onClick={handleUpdate} disabled={saving || !newTrain.trim()} style={{
+            padding: '10px 20px', borderRadius: 9, border: 'none', cursor: 'pointer',
+            fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.85rem',
+            background: '#dc2626', color: '#fff',
+            opacity: saving || !newTrain.trim() ? 0.6 : 1,
+            transition: 'opacity 0.2s',
+          }}>
+            {saving ? 'Saving…' : 'Save'}
+          </button>
         </div>
       )}
-      <button onClick={handleToggleDetails}>
-        {showDetails ? 'Hide Details' : 'Show Details'}
-      </button>
     </div>
   );
 };
 
 const EditTrainsPage = () => {
   const [trains, setTrains] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchTrains = () => {
     axios.get('http://localhost:3001/api/admin/trains')
-      .then(response => setTrains(response.data))
-      .catch(error => console.error(error));
-  }, []);
+      .then(response => { setTrains(response.data); setLoading(false); })
+      .catch(error => { console.error(error); setLoading(false); });
+  };
 
-  const handleUpdateTrain = (oldTrain, newTrain) => {
-    axios.put(`http://localhost:3001/api/admin/trains/${oldTrain}`, { newTrain, oldTrain })
-      .then(response => {
-        console.log(response.data.message);
-        return axios.get('http://localhost:3001/api/admin/trains');
-      })
-      .then(response => setTrains(response.data))
-      .catch(error => console.error(error));
+  useEffect(() => { fetchTrains(); }, []);
+
+  const handleUpdateTrain = async (oldTrain, newTrain) => {
+    await axios.put(`http://localhost:3001/api/admin/trains/${oldTrain}`, { newTrain, oldTrain });
+    fetchTrains();
   };
 
   return (
-    <div>
-      <div><AdminNavbar /></div>
-      <h1>Trains</h1>
-      {trains.map(train => (
-        <TrainTicketItem key={train} train={train} onUpdate={handleUpdateTrain} />
-      ))}
-      <div><Footer /></div>
+    <div className="page-wrapper">
+      <AdminNavbar />
+      <section style={{ padding: '50px 24px 40px', maxWidth: 800, margin: '0 auto', width: '100%' }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ marginBottom: 6 }}>Manage Trains</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Rename trains across all associated ticket listings.</p>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 60, color: 'var(--text-muted)' }}>Loading trains…</div>
+        ) : trains.length === 0 ? (
+          <div style={{
+            textAlign: 'center', padding: '48px 24px',
+            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 16,
+            color: 'var(--text-muted)',
+          }}>
+            No trains found.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {trains.map(train => (
+              <TrainItem key={train} train={train} onUpdate={handleUpdateTrain} />
+            ))}
+          </div>
+        )}
+      </section>
+      <Footer />
     </div>
   );
 };

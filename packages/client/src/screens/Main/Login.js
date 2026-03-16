@@ -1,59 +1,90 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useAuthUser } from '../../components/AuthContextUser';
-
-
-
+import styles from './AuthPage.module.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const { login, user } = useAuthUser(); // Получение функции login из контекста
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuthUser();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
+    setLoading(true);
+    setMessage('');
     try {
-      const response = await axios.post('http://localhost:3001/api/login', {
-        email: email,
-        password: password,
-      });
-  
-      const userData = response.data.user;
-  
-      // Проверьте, что userData содержит правильное поле для ID пользователя
-      console.log('User data after login:', userData, user);
-  
-      // Устанавливаем информацию о пользователе
-      login(userData);
-  
-      setMessage('Login successful');
+      const response = await axios.post('http://localhost:3001/api/login', { email, password });
+      login(response.data.user);
+      navigate('/');
     } catch (error) {
-      console.error('Ошибка входа', error.response ? error.response.data : error.message);
-      setMessage('Ошибка входа. Проверьте ваши учетные данные и повторите попытку.');
+      setMessage('Invalid email or password. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className='login.css'>
-  <Navbar />
-  <div className="login-form">
-    <h1>User Login</h1>
-    <div>
-      <label>Email:</label>
-      <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-    </div>
-    <div>
-      <label>Password:</label>
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-    </div>
-    <button onClick={handleLogin}>Login</button>
-    {message && <p>{message}</p>}
-  </div>
-  <Footer />
-</div>
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleLogin();
+  };
 
+  return (
+    <div className={styles.authContainer}>
+      <Navbar />
+      <div className={styles.authContent}>
+        {/* Logo */}
+        <div className={styles.authLogo}>
+          <div className={styles.authLogoIcon}>✈</div>
+          <span className={styles.authLogoText}>FlyCo</span>
+        </div>
+
+        <h1 className={styles.authTitle}>Welcome back</h1>
+        <p className={styles.authSubtitle}>Sign in to manage your bookings.</p>
+
+        <div className={styles.formGroup}>
+          <label>Email Address</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button
+          className={styles.authButton}
+          onClick={handleLogin}
+          disabled={loading}
+          style={{ opacity: loading ? 0.7 : 1 }}
+        >
+          {loading ? 'Signing in…' : 'Sign In →'}
+        </button>
+
+        {message && <p className={styles.authMessage}>{message}</p>}
+
+        <div className={styles.authFooter}>
+          Don't have an account?{' '}
+          <Link to="/signup">Sign up for free</Link>
+        </div>
+      </div>
+      <Footer />
+    </div>
   );
 };
 
