@@ -27,13 +27,13 @@ const FlightTicketInfo = ({ ticket, onEditClick, onDeleteClick }) => (
     </div>
     <div style={{ display: 'flex', gap: 8 }}>
       <button onClick={() => onEditClick(ticket)} style={{
-        padding: '7px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+        padding: '7px 16px', borderRadius: 8, cursor: 'pointer',
         fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
         background: 'var(--bg-elevated)', color: 'var(--text-secondary)',
         border: '1px solid var(--border-subtle)',
       }}>Edit</button>
       <button onClick={() => onDeleteClick(ticket._id)} style={{
-        padding: '7px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+        padding: '7px 16px', borderRadius: 8, cursor: 'pointer',
         fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '0.8rem',
         background: 'rgba(220,38,38,0.08)', color: '#dc2626',
         border: '1px solid rgba(220,38,38,0.18)',

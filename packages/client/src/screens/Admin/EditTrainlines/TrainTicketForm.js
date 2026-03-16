@@ -74,7 +74,7 @@ const TrainTicketForm = ({ onAddTicket }) => {
       <button onClick={() => setOpen(!open)} style={{
         width: '100%', padding: '18px 22px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        background: 'transparent', border: 'none', cursor: 'pointer',
+        background: 'transparent', cursor: 'pointer',
         fontFamily: 'var(--font-body)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -161,7 +161,7 @@ const TrainTicketForm = ({ onAddTicket }) => {
 
           <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
             <button onClick={addTicket} disabled={adding} style={{
-              flex: 1, padding: '11px', borderRadius: 9, border: 'none', cursor: 'pointer',
+              flex: 1, padding: '11px', borderRadius: 9, cursor: 'pointer',
               fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.9rem',
               background: '#dc2626', color: '#fff',
               boxShadow: '0 2px 10px rgba(220,38,38,0.3)',

@@ -83,13 +83,13 @@ const TrainTicketList = ({ onTicketClick }) => {
           onKeyDown={e => e.key === 'Enter' && handleSearch()}
           placeholder="Search by train name…"
           style={{
-            flex: 1, border: 'none', background: 'transparent',
+            flex: 1,  background: 'transparent',
             color: 'var(--text-primary)', fontFamily: 'var(--font-body)',
             fontSize: '0.9rem', outline: 'none',
           }}
         />
         <button onClick={handleSearch} style={{
-          padding: '7px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          padding: '7px 16px', borderRadius: 8,  cursor: 'pointer',
           fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.8rem',
           background: '#dc2626', color: '#fff',
         }}>Search</button>

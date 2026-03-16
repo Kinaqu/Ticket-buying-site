@@ -125,7 +125,7 @@ const TrainTicketEditForm = ({
 
     <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
       <button onClick={onSave} style={{
-        flex: 1, padding: '10px', borderRadius: 9, border: 'none', cursor: 'pointer',
+        flex: 1, padding: '10px', borderRadius: 9, cursor: 'pointer',
         fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.875rem',
         background: '#dc2626', color: '#fff',
       }}>Save Changes</button>

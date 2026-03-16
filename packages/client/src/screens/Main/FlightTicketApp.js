@@ -132,7 +132,7 @@ const FlightCard = ({ ticket, onBuy }) => {
       {/* Buy */}
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button onClick={handleBuy} disabled={buying || bought} style={{
-          padding: '9px 22px', borderRadius: 10, border: 'none',
+          padding: '9px 22px', borderRadius: 10,
           cursor: bought ? 'default' : 'pointer',
           fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.875rem',
           background: bought ? 'rgba(52,211,153,0.15)' : 'var(--red-muted)',

@@ -124,7 +124,6 @@ const UserTickets = () => {
             <button key={key} onClick={() => setActiveTab(key)} style={{
               padding: '8px 20px',
               borderRadius: 9,
-              border: 'none',
               cursor: 'pointer',
               fontFamily: 'var(--font-body)',
               fontWeight: 600,
