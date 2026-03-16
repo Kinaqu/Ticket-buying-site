@@ -4,23 +4,52 @@ const express = require('express');
 const cors = require('cors');
 const passport = require('passport');
 const cookieSession = require('cookie-session');
+const bodyParser = require('body-parser');
+
 const AdminPassport = require('./routes/POST/Auth/adminconfig');
 const UserPassport = require('./routes/POST/Auth/config');
+
+require('./db/db');
+
+const insertAdminData = require('./db/data/AdminData');
+const CityData = require('./db/data/CityData');
 
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
-app.use(cookieSession({
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: ['gefwekfwkmojnjnjNNJN']
+app.set('trust proxy', 1);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`CORS blocked for origin: ${origin}`));
+  },
+  credentials: true,
 }));
 
-const mongoose = require('./db/db');
-const bodyParser = require('body-parser');
-const insertAdminData = require('./db/data/AdminData');
-const CityData = require('./db/data/CityData');
+app.use(express.json());
+app.use(bodyParser.json());
+
+app.use(cookieSession({
+  name: 'session',
+  maxAge: 24 * 60 * 60 * 1000,
+  keys: [process.env.JWT_SECRET || 'local-dev-secret-key'],
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+}));
 
 // Инициализация и настройка Passport для админа
 app.use('/admin', AdminPassport.initialize());
@@ -30,12 +59,8 @@ app.use('/admin', AdminPassport.session());
 app.use('/', UserPassport.initialize());
 app.use('/', UserPassport.session());
 
-app.use(express.json());
-
 insertAdminData();
 CityData();
-
-app.use(bodyParser.json());
 
 const adminLogin = require('./routes/POST/Auth/AdminLogin');
 const userLogin = require('./routes/POST/Auth/UserLogin');
@@ -101,6 +126,10 @@ app.use('/api', UsertTickets);
 
 const ProfiletTickets = require('./routes/GET/Profile');
 app.use('/api', ProfiletTickets);
+
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 app.use((req, res) => res.status(404).send('Not Found'));
 

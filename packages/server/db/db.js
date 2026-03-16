@@ -1,20 +1,27 @@
 const mongoose = require('mongoose');
 
-const url = `mongodb+srv://dimer133745_db_user:qrVBpsVuBTdEiDNW@cluster0.kjr2ugw.mongodb.net/?appName=Cluster0`;
+const mongoUri = process.env.MONGODB_URI;
 
-// Подключение к MongoDB с использованием Mongoose
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+if (!mongoUri) {
+  throw new Error('MONGODB_URI is not defined');
+}
+
+mongoose.connect(mongoUri);
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Ошибка подключения к MongoDB:'));
+
+db.on('error', (error) => {
+  console.error('Ошибка подключения к MongoDB:', error);
+});
+
 db.once('open', () => {
   console.log('Успешное подключение к MongoDB');
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('Закрытие соединения с базой данных по сигналу SIGINT');
-  db.close(); // Закрыть соединение с использованием mongoose
-  process.exit();
+  await mongoose.connection.close();
+  process.exit(0);
 });
 
 module.exports = mongoose;
