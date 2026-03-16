@@ -11,7 +11,6 @@ const UserPassport = require('./routes/POST/Auth/config');
 
 const db = require('./db/db');
 
-
 const insertAdminData = require('./db/data/AdminData');
 const CityData = require('./db/data/CityData');
 
@@ -20,25 +19,36 @@ const port = process.env.PORT || 3001;
 
 const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
   .split(',')
-  .map((origin) => origin.trim())
+  .map((origin) => origin.trim().replace(/\/$/, ''))
   .filter(Boolean);
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    const normalizedOrigin = origin ? origin.replace(/\/$/, '') : origin;
+
+    if (!normalizedOrigin) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(normalizedOrigin)) {
+      return callback(null, true);
+    }
+
+    console.log('CORS blocked origin:', normalizedOrigin);
+    console.log('Allowed origins:', allowedOrigins);
+
+    return callback(new Error(`CORS blocked for origin: ${normalizedOrigin}`));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 204,
+};
 
 app.set('trust proxy', 1);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) {
-      return callback(null, true);
-    }
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    return callback(new Error(`CORS blocked for origin: ${origin}`));
-  },
-  credentials: true,
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -52,11 +62,9 @@ app.use(cookieSession({
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
 }));
 
-// Инициализация и настройка Passport для админа
 app.use('/admin', AdminPassport.initialize());
 app.use('/admin', AdminPassport.session());
 
-// Инициализация и настройка Passport для пользователя
 app.use('/', UserPassport.initialize());
 app.use('/', UserPassport.session());
 
