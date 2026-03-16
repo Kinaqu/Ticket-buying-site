@@ -19,8 +19,8 @@ router.post('/AirplaneTicketUser/:airplaneTicketId/purchase', async (req, res) =
 
     // Создание новой транзакции
     const newTransaction = new TransactionHistoryFlight({
-      UserID: mongoose.Types.ObjectId(userId),
-      AirplaneTicketID: mongoose.Types.ObjectId(airplaneTicketId),
+      UserID: new mongoose.Types.ObjectId(userId),
+      AirplaneTicketID: new mongoose.Types.ObjectId(airplaneTicketId),
       TransactionStatus: 'ожидание', // Установка статуса транзакции по умолчанию в "ожидание"
     });
 
