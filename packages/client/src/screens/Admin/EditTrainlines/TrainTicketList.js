@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import api from '../../api';
+import api from '../../../api';
 import TrainTicketEditForm from './TrainTicketEditForm';
 
 const TrainTicketList = ({ onTicketClick }) => {
