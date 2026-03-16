@@ -206,14 +206,14 @@ const FlightTicketApp = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
-              flex: 1, border: 'none', background: 'transparent',
+              flex: 1,  background: 'transparent',
               color: 'var(--text-primary)', fontFamily: 'var(--font-body)',
               fontSize: '0.95rem', outline: 'none',
             }}
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} style={{
-              background: 'transparent', border: 'none', cursor: 'pointer',
+              background: 'transparent', cursor: 'pointer',
               color: 'var(--text-muted)', fontSize: 18, padding: '4px 8px',
             }}>×</button>
           )}
