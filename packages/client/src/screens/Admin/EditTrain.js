@@ -90,7 +90,7 @@ const EditTrainsPage = () => {
       .then(response => { setTrains(response.data); setLoading(false); })
       .catch(error => { console.error(error); setLoading(false); });
   };
-ч
+
   useEffect(() => { fetchTrains(); }, []);
 
   const handleUpdateTrain = async (oldTrain, newTrain) => {
