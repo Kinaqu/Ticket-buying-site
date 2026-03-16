@@ -10,7 +10,7 @@ const insertAdminData = async () => {
       return;
     }
 
-    // Хеширование пароля
+    // addition of admin ONLY for test purposes, REMOVE on production
     const hashedPassword = await bcrypt.hash('12345678', 10);
 
     // Данные для заполнения коллекции Admins
